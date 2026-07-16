@@ -1,0 +1,27 @@
+# Backend
+backend/venv/
+backend/.env
+backend/chroma_db/
+backend/app/uploads/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Frontend
+frontend/node_modules/
+frontend/build/
+frontend/dist/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
