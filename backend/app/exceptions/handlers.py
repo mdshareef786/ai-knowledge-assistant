@@ -1,7 +1,9 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 
+
 from app.exceptions.app_exception import AppException
+
 
 
 async def app_exception_handler(
@@ -13,6 +15,8 @@ async def app_exception_handler(
         content={
             "success": False,
             "message": exc.message,
-            "data": None
+            "data": None,
+            "errors": None,
+            "meta": None
         }
     )

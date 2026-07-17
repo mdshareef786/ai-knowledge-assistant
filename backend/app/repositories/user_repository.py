@@ -16,6 +16,19 @@ class UserRepository:
             .first()
         )
 
+
+    @staticmethod
+    def get_by_id(
+        db: Session,
+        user_id: int
+    ):
+        return (
+            db.query(User)
+            .filter(User.id == user_id)
+            .first()
+        )
+
+
     @staticmethod
     def create(
         db: Session,
@@ -24,4 +37,19 @@ class UserRepository:
         db.add(user)
         db.commit()
         db.refresh(user)
+
+        return user
+
+
+    @staticmethod
+    def update_password(
+        db: Session,
+        user: User,
+        hashed_password: str
+    ):
+        user.password = hashed_password
+
+        db.commit()
+        db.refresh(user)
+
         return user

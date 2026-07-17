@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 
-from jose import jwt
+from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 from app.core.config import settings
@@ -41,3 +41,48 @@ def create_access_token(data: dict):
         settings.SECRET_KEY,
         algorithm=settings.ALGORITHM
     )
+
+def create_password_reset_token(
+    user_id: int,
+    email: str
+):
+    expire = datetime.now(
+        timezone.utc
+    ) + timedelta(minutes=15)
+
+    payload = {
+        "sub": str(user_id),
+        "email": email,
+        "type": "password_reset",
+        "exp": expire
+    }
+
+    return jwt.encode(
+        payload,
+        settings.SECRET_KEY,
+        algorithm=settings.ALGORITHM
+    )
+
+
+def verify_password_reset_token(
+    token: str
+):
+    try:
+        payload = jwt.decode(
+            token,
+            settings.SECRET_KEY,
+            algorithms=[
+                settings.ALGORITHM
+            ]
+        )
+
+        if (
+            payload.get("type")
+            != "password_reset"
+        ):
+            return None
+
+        return payload
+
+    except JWTError:
+        return None

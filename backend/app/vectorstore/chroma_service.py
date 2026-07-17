@@ -1,5 +1,6 @@
 import chromadb
 
+
 client = chromadb.PersistentClient(
     path="chroma_db"
 )
@@ -10,6 +11,7 @@ collection = client.get_or_create_collection(
         "hnsw:space": "cosine"
     }
 )
+
 
 def add_document(
     user_id: int,
@@ -45,15 +47,24 @@ def search(
     n_results: int = 5
 ):
     return collection.query(
-        query_embeddings=[query_embedding.tolist()],
+        query_embeddings=[
+            query_embedding.tolist()
+        ],
         n_results=n_results,
         where={
             "user_id": user_id
-        }
+        },
+        include=[
+            "documents",
+            "metadatas",
+            "distances"
+        ]
     )
 
 
-def delete_document(document_id: int):
+def delete_document(
+    document_id: int
+):
     collection.delete(
         where={
             "document_id": document_id

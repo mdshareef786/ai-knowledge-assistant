@@ -1,12 +1,16 @@
-from fastapi import Depends, status
+from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import get_db
-from app.exceptions.app_exception import AppException
+
+from app.exceptions.unauthorized_exception import UnauthorizedException
+from app.exceptions.not_found_exception import NotFoundException
+
 from app.models.user import User
+
 
 security = HTTPBearer()
 
@@ -28,15 +32,13 @@ def get_current_user(
         user_id = payload.get("sub")
 
         if user_id is None:
-            raise AppException(
-                message="Invalid token.",
-                status_code=status.HTTP_401_UNAUTHORIZED
+            raise UnauthorizedException(
+                "Invalid token."
             )
 
     except JWTError:
-        raise AppException(
-            message="Invalid or expired token.",
-            status_code=status.HTTP_401_UNAUTHORIZED
+        raise UnauthorizedException(
+            "Invalid or expired token."
         )
 
     user = (
@@ -46,9 +48,8 @@ def get_current_user(
     )
 
     if not user:
-        raise AppException(
-            message="User not found.",
-            status_code=status.HTTP_404_NOT_FOUND
+        raise NotFoundException(
+            "User not found."
         )
 
     return user

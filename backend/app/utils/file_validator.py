@@ -1,6 +1,7 @@
 import os
 
-from app.exceptions.app_exception import AppException
+from app.exceptions.validation_exception import ValidationException
+
 
 ALLOWED_EXTENSIONS = {
     ".pdf",
@@ -11,11 +12,18 @@ ALLOWED_EXTENSIONS = {
 
 def validate_file(filename: str):
 
-    extension = os.path.splitext(filename)[1].lower()
+    if not filename:
+        raise ValidationException(
+            "Filename is required."
+        )
+
+    extension = os.path.splitext(
+        filename
+    )[1].lower()
 
     if extension not in ALLOWED_EXTENSIONS:
-        raise AppException(
-            message="Only PDF, DOCX and TXT files are allowed."
+        raise ValidationException(
+            "Only PDF, DOCX and TXT files are allowed."
         )
 
     return extension
